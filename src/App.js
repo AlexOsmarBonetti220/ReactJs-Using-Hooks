@@ -1,26 +1,61 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+/*
+import React, {useState, useEffect} from 'react';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+//Usando componente funcional com hooks
+export default function App(){
+  //State
+  const [nome, setNome] = useState("");
+
+  //Utilizando o userEffect, semelhante ao componentDidMount
+  useEffect(()=>{
+    let nome = "Alex";
+    setNome(nome);
+  }, [])
+  //O array vazio significa que não quero ficar chamando o useEffect cada vez que um state é atualizado. Se passar o nome 
+  //de um state dentro do array, só aquele será atualizado. Se não passar nada, todos serão atualizados.
+  return(
+    <div>
+      <h4>Meu nome: {nome}</h4>
     </div>
-  );
+  )
+}
+*/
+
+import React, {useState, useEffect} from "react";
+import Luas from "./components/shared/luas";
+
+//Função para pegar dados da api
+async function getDates(){
+  let planets = await fetch("http://localhost:3000/api/planets.json");
+  let dados = await planets.json();
+  return dados;
 }
 
-export default App;
+export default function Planets(){
+  //Criando o state
+  const[planets, setPlanets] = useState([]);
+  //Criando o userEffect
+  useEffect(()=>{
+    //Chamo a função
+    getDates().then((date)=>{
+      setPlanets(date.planets);
+    })
+  }, [])
+  return(
+    <div>
+      {planets.map((planet)=>{
+        return(
+          <div key={planet.id}>
+            <h2>{planet.name}</h2>
+            <img src={planet.img_url} />
+            <p>{planet.description}</p>
+            <h4>Luas</h4>
+            <ul>
+              <Luas planet={planet.id} />
+            </ul>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
